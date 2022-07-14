@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Excel = Microsoft.Office.Interop.Excel;
+using Forms = System.Windows.Forms;
 
 #endregion
 
@@ -26,23 +27,64 @@ namespace RevitAddinAcademy02
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            TaskDialog.Show("Project Setup", "This is the Project Setup");
+            //Creating Open File Dialog
+            string excelPath = "";
+            Forms.OpenFileDialog fileDialog = new Forms.OpenFileDialog();
+            fileDialog.Filter = "Excel File | *.xlsx; *.xls";
+            fileDialog.Multiselect = false;
+            fileDialog.InitialDirectory = @"C:\";
 
-            string excelPath = @"C:\Users\Jon.R.Ryea\Documents\Revit Addin Academy\Excel\Session02_Challenge.xlsx";
+            if (fileDialog.ShowDialog() == Forms.DialogResult.OK)
+            {
+                excelPath = fileDialog.FileName;    
+            }
 
+            //Opening Excel file
             Excel.Application excelapp = new Excel.Application();               //Opens Excel
             Excel.Workbook wkBook = excelapp.Workbooks.Open(excelPath);         //Opens Excel Workbook (File)
-            Excel.Worksheet wkSheet1 = wkBook.Worksheets.Item[1];                //Opens first Worksheet (starts at index of 1)
+            Excel.Worksheet wkSheet1 = wkBook.Worksheets.Item[1];               //Opens first Worksheet (starts at index of 1)
             Excel.Worksheet wkSheet2 = wkBook.Worksheets.Item[2];
 
+  
             Excel.Range excelRng1 = wkSheet1.UsedRange;
-            int rowCount1 = excelRng1.Rows.Count;
             Excel.Range excelRng2 = wkSheet2.UsedRange;
+            int rowCount1 = excelRng1.Rows.Count;
             int rowCount2 = excelRng2.Rows.Count;
+            
+            
 
             using (Transaction t = new Transaction(doc))
             {
                 t.Start("Transaction");
+
+                
+                //Creating Views
+                for (int i = 2; i<=rowCount1; i++)
+                {
+                    Excel.Range cellViewName = excelRng1.Rows[i,3];
+                    string viewName = cellViewName.Value.ToString();
+
+                    FilteredElementCollector viewCollector = new FilteredElementCollector(doc);
+                    viewCollector.OfClass(typeof(ViewFamilyType));                                  //Collects Views                            
+
+                    ViewFamilyType floorVFT = null;
+                    ViewFamilyType rcpVFT = null;
+
+                    foreach(ViewFamilyType type in viewCollector)
+                    {
+                        if(type.ViewFamily == ViewFamily.FloorPlan)
+                        {
+                            floorVFT = type;
+                        }
+                        else if(type.ViewFamily == ViewFamily.CeilingPlan)
+                        {
+                            rcpVFT = type;
+                        }
+                    }
+
+                   // ViewPlan viewFP = ViewPlan.Create(doc,floorVFT.Id, newLevel.Id);
+
+                }
 
                 // Creating Levels
 

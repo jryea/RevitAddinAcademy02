@@ -96,20 +96,21 @@ namespace RevitAddinAcademy02
 
                 View existingView = GetViewByName(doc, "Level 1");
 
-                ViewSheet newSheet = new ViewSheet.Create(doc, collector2.FirstElementId());
+                //ViewSheet newSheet = new ViewSheet.Create(doc, collector2.FirstElementId());
 
-                Viewport newVP = Viewport.Create(doc, newSheet.ID, curPlan.Id, new XYZ(0, 0, 0));           //XYZ of 0,0,0 of a sheet should be the lower left corner
+               // Viewport newVP = Viewport.Create(doc, newSheet.ID, curPlan.Id, new XYZ(0, 0, 0));           //XYZ of 0,0,0 of a sheet should be the lower left corner
 
-                newSheet.Name = "TEST SHEET";
-                newSheet.SheetNumber = "A100101010";
+                //newSheet.Name = "TEST SHEET";
+               // newSheet.SheetNumber = "A100101010";
 
-                foreach(Parameter curParam in newSheet.Parameters)               //Loops through every parameter of that element
+               /* foreach(Parameter curParam in newSheet.Parameters)               //Loops through every parameter of that element
                 {
                     if(curParam.Definition.Name == "Drawn By")
                     {
                         curParam.Set("JR");
                     }
                 }
+               */
                 
                 t.Commit();
             }
