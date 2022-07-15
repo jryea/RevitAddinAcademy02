@@ -58,7 +58,7 @@ namespace RevitAddinAcademy02
                 t.Start("Transaction");
 
                 
-                //Creating Views
+               /* //Creating Views
                 for (int i = 2; i<=rowCount1; i++)
                 {
                     Excel.Range cellViewName = excelRng1.Rows[i,3];
@@ -86,6 +86,7 @@ namespace RevitAddinAcademy02
 
                 }
 
+                */
                 // Creating Levels
 
                 for (int i = 2; i <= rowCount1; i++)
