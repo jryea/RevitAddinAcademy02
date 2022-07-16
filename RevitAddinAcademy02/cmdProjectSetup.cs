@@ -27,153 +27,222 @@ namespace RevitAddinAcademy02
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            //Creating Open File Dialog
-            string excelPath = "";
-            Forms.OpenFileDialog fileDialog = new Forms.OpenFileDialog();
-            fileDialog.Filter = "Excel File | *.xlsx; *.xls";
-            fileDialog.Multiselect = false;
-            fileDialog.InitialDirectory = @"C:\";
-
-            if (fileDialog.ShowDialog() == Forms.DialogResult.OK)
-            {
-                excelPath = fileDialog.FileName;    
-            }
-
-            //Opening Excel file
-            Excel.Application excelapp = new Excel.Application();               //Opens Excel
-            Excel.Workbook wkBook = excelapp.Workbooks.Open(excelPath);         //Opens Excel Workbook (File)
-            Excel.Worksheet wkSheet1 = wkBook.Worksheets.Item[1];               //Opens first Worksheet (starts at index of 1)
-            Excel.Worksheet wkSheet2 = wkBook.Worksheets.Item[2];
-
-  
-            Excel.Range excelRng1 = wkSheet1.UsedRange;
-            Excel.Range excelRng2 = wkSheet2.UsedRange;
-            int rowCount1 = excelRng1.Rows.Count;
-            int rowCount2 = excelRng2.Rows.Count;
-
-
-            //Collecting Titleblocks
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
-            collector.OfCategory(BuiltInCategory.OST_TitleBlocks);                              //Collects the titleblocks
-            collector.WhereElementIsElementType();                                              //Method that sets the element collection to Type
-            
-            //Collecting views
-            FilteredElementCollector viewCollector = new FilteredElementCollector(doc);
-            viewCollector.OfClass(typeof(ViewFamilyType));                                                            
-
-            ViewFamilyType floorVFT = null;
-            ViewFamilyType rcpVFT = null;
-
-            foreach (ViewFamilyType type in viewCollector)
-            {
-                if (type.ViewFamily == ViewFamily.FloorPlan)
-                {
-                    floorVFT = type;
-                }
-                else if (type.ViewFamily == ViewFamily.CeilingPlan)
-                {
-                    rcpVFT = type;
-                }
-            }
+            string filePath = GetExcelWorksheet();
+            LevelData levelData = new LevelData(filePath);
+            SheetData sheetData = new SheetData(filePath);
 
             using (Transaction t = new Transaction(doc))
             {
                 t.Start("Transaction");
 
-               
-                // Creating Levels and Views
+                //Create Levels and Views
 
-                for (int i = 2; i <= rowCount1/2; i++)
+                ViewFamilyType curVFT = CollectVFType(doc);
+                ViewFamilyType curRCPVFT = CollectVFType(doc, "ceiling");
+
+                for (int i = 0; i<(levelData.Name.Length); i++)
                 {
-                    Excel.Range cellLevelName = wkSheet1.Cells[i, 1];                    //Sets the cell to a variable
-                    Excel.Range cellElevation = wkSheet1.Cells[i, 2];
-      
-                    string levelName = cellLevelName.Value.ToString();                   //Returns the value of a cell
-                    double elevation = cellElevation.Value;
-                
-                    Level level = Level.Create(doc,elevation);                           //Creating the level
-                    level.Name = levelName;                                              //Setting the name of the level
-                    ViewPlan curPlan = ViewPlan.Create(doc, floorVFT.Id, level.Id);     //Creating a floor plan of the current level
-                    ViewPlan curRCP = ViewPlan.Create(doc, rcpVFT.Id, level.Id);        //Creating a RCP of the current level
-                    curRCP.Name = curRCP.Name + " RCP";
+                    Level newLevel = Level.Create(doc, levelData.Elevation[i]);
+                    newLevel.Name = levelData.Name[i];
+
+                    ViewPlan newFloorPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
+                    ViewPlan newRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
+                    newRCP.Name = newRCP.Name + " RCP";
                 }
 
-                // Creating Sheets
 
-                                                              
-                FilteredElementCollector collector3 = new FilteredElementCollector(doc);  //Collecting Views
-                collector3.OfClass(typeof(View));
-
-                for (int i = 2; i <= rowCount2; i++)
+                //Create Sheets and Place Views on Sheets
+                Element titleblock = GetTitleblock(doc, "E1 30x42 Horizontal");
+                for (int i = 0; i < (sheetData.Name.Length); i++)
                 {
+                    ViewSheet newSheet = ViewSheet.Create(doc, titleblock.Id);
+                    newSheet.Name = sheetData.Name[i];
+                    newSheet.SheetNumber = sheetData.Number[i];
+                    SetSheetParam(newSheet, "Drawn By", sheetData.DrawnBy[i]);
+                    SetSheetParam(newSheet, "Checked By", sheetData.CheckedBy[i]);
 
-                   
-                    Excel.Range cellSheetNumber = wkSheet2.Cells[i, 1];
-                    Excel.Range cellSheetName = wkSheet2.Cells[i,2];
-                    Excel.Range cellView = wkSheet2.Cells[i, 3];
-                    Excel.Range cellDrawnBy = wkSheet2.Cells[i, 4];
-                    Excel.Range cellCheckedBy = wkSheet2.Cells[i, 5];
-
-                    string sheetNumber = cellSheetNumber.Value.ToString();
-                    string sheetName = cellSheetName.Value.ToString();
-                    string viewName = cellView.Value.ToString();
-                    string sheetDrawnBy = cellDrawnBy.Value.ToString();
-                    string sheetCheckedBy = cellCheckedBy.Value.ToString();
-
-                    ViewSheet sheet = ViewSheet.Create(doc, collector.FirstElementId());                //Creates a new sheet
-                    sheet.SheetNumber = sheetNumber;
-                    sheet.Name = sheetName;
-
-                    foreach(Parameter curParam in sheet.Parameters)                                     //Cycles through all parameters of the current sheet
-                    {
-                        if(curParam.Definition.Name == "Drawn By")
-                        {
-                            curParam.Set(sheetDrawnBy);
-                        }
-                        if(curParam.Definition.Name == "Checked By")
-                        {
-                            curParam.Set(sheetCheckedBy);
-                        }
-                    }
-
-                    //Setting Views on Sheets
-
-                    View existingView = null;
-                    foreach(View curView in collector3)
-                    {
-                        if(curView.Name == viewName)
-                        {
-                            existingView = curView;
-                            TaskDialog.Show("existingView.Name", existingView.Name);
-                            TaskDialog.Show("CurView.Name", curView.Name);
-                            TaskDialog.Show("viewName", viewName);
-                        }
-                        
-                    }
-
+                    View existingView = GetViewByName(doc, sheetData.View[i]);
                     if (existingView != null)
                     {
-
-                        Viewport newVP = Viewport.Create(doc, sheet.Id, existingView.Id, new XYZ(0, 0, 0));
+                        Viewport newVP = Viewport.Create(doc, newSheet.Id, existingView.Id, new XYZ(0,0,0));
                     }
                     else
                     {
                         TaskDialog.Show("Error", "Could not find view");
                     }
-                    
-
-
                 }
-
-                t.Commit();
+                    t.Commit();
             }
 
             return Result.Succeeded;
 
-            // do some stuff in Excel
+        }
 
-            wkBook.Close();                             //Close File
-            excelapp.Quit();                            //Close Excel Application
+        internal string GetExcelWorksheet()
+        {
+            Forms.OpenFileDialog dialog = new Forms.OpenFileDialog();
+            dialog.InitialDirectory = @"C:\";
+            dialog.Multiselect = true;
+            dialog.Filter = "Excel Files | *.xlsx; *.xls; *.xlsm";
+
+            string filePath = "";
+            if (dialog.ShowDialog() == Forms.DialogResult.OK)
+            {
+                filePath = dialog.FileName;
+            }
+            return filePath;
+        }
+
+        internal ElementType GetTitleblock(Document doc, string tbName)
+        {
+            FilteredElementCollector collector = new FilteredElementCollector(doc);
+            collector.OfCategory(BuiltInCategory.OST_TitleBlocks);                         
+            collector.WhereElementIsElementType(); 
+            
+            foreach (ElementType element in collector)
+            {
+                if (element.Name == tbName)
+                {
+                    return element;
+                }  
+            }
+            return null;
+        }
+
+        internal View GetViewByName(Document doc, string viewName)
+        {
+            FilteredElementCollector collector = new FilteredElementCollector(doc);
+            collector.OfClass(typeof(View));
+           
+            foreach (View curView in collector)
+            {
+                if (curView.Name == viewName)
+                {
+                    return curView;
+                }
+            }
+            return null;
+        }
+
+        internal void SetSheetParam (ViewSheet sheet, string paramName, string value)
+        {
+            bool err = false;
+            foreach (Parameter curParam in sheet.Parameters)
+            {
+                if (curParam.Definition.Name == paramName)
+                {
+                    curParam.Set(value);
+                }
+            }
+        }
+
+        internal ViewFamilyType CollectVFType (Document doc, string planVFT = "floor")
+        {
+            FilteredElementCollector collectorVFT = new FilteredElementCollector(doc);
+            collectorVFT.OfClass(typeof(ViewFamilyType));
+
+            ViewFamilyType curVFT = null;
+            ViewFamilyType curRCPVFT = null;
+            foreach (ViewFamilyType element in collectorVFT)
+            {
+                if (element.ViewFamily == ViewFamily.FloorPlan)
+                {
+                    curVFT = element;
+                }
+                else if (element.ViewFamily == ViewFamily.CeilingPlan)
+                {
+                    curRCPVFT = element;
+                }
+            }
+            if (planVFT == "floor")
+            {
+                return curVFT;
+            }
+            else if (planVFT == "ceiling")
+            {
+                return curRCPVFT;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        internal struct LevelData                             
+        {
+            public Excel.Application Excelapp;
+            public Excel.Workbook WkBook;
+            public Excel.Worksheet WkSheet;
+            public Excel.Range ExcelRng;
+            public int RowCount;
+            public string[] Name;
+            public double[] Elevation;
+            
+            public LevelData(string filePath)                          
+            {
+                Excelapp = new Excel.Application();
+                WkBook = Excelapp.Workbooks.Open(filePath);
+                WkSheet = WkBook.Worksheets.Item[1];
+                ExcelRng = WkSheet.UsedRange;
+                RowCount = ExcelRng.Rows.Count;
+                Name = new string[RowCount-1];
+                Elevation = new double[RowCount-1];
+
+                for (int i = 2; i <= RowCount; i++)
+                {
+                    Excel.Range cellLevelName = WkSheet.Cells[i,1];
+                    Excel.Range cellElevation = WkSheet.Cells[i,2];
+                    Name[i-2] = cellLevelName.Value.ToString();
+                    Elevation[i-2] = cellElevation.Value;                             
+                }
+                WkBook.Close();
+                Excelapp.Quit();
+            }
+        }
+        internal struct SheetData
+        {
+            public Excel.Application Excelapp;
+            public Excel.Workbook WkBook;
+            public Excel.Worksheet WkSheet;
+            public Excel.Range ExcelRng;
+            public int RowCount;
+            public string[] Number;
+            public string[] Name;
+            public string[] View;
+            public string[] DrawnBy;
+            public string[] CheckedBy;
+
+            public SheetData(string filePath)
+            {
+                Excelapp = new Excel.Application();
+                WkBook = Excelapp.Workbooks.Open(filePath);
+                WkSheet = WkBook.Worksheets.Item[2];
+                ExcelRng = WkSheet.UsedRange;
+                RowCount = ExcelRng.Rows.Count;
+                Number = new string[RowCount - 1];
+                Name = new string[RowCount - 1];
+                View = new string[RowCount - 1];
+                DrawnBy = new string[RowCount - 1];
+                CheckedBy = new string[RowCount - 1];
+
+
+                for (int i = 2; i <= RowCount; i++)
+                {
+                    Excel.Range cellSheetNum = WkSheet.Cells[i, 1];
+                    Excel.Range cellSheetName = WkSheet.Cells[i, 2];
+                    Excel.Range cellView = WkSheet.Cells[i, 3];
+                    Excel.Range cellDrawnBy = WkSheet.Cells[i, 4];
+                    Excel.Range cellCheckedBy = WkSheet.Cells[i, 5];
+
+                    Number[i - 2] = cellSheetNum.Value.ToString();
+                    Name[i - 2] = cellSheetName.Value.ToString();
+                    View[i - 2] = cellView.Value.ToString();
+                    DrawnBy[i - 2] = cellDrawnBy.Value.ToString();
+                    CheckedBy[i - 2] = cellCheckedBy.Value.ToString();
+                }
+                WkBook.Close();
+                Excelapp.Quit();
+            }
         }
     }
 }
