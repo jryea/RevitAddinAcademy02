@@ -18,6 +18,15 @@
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
+    <AddIn Type="Command">
+	    <Text>Command Elements from Lines</Text>
+	    <Description>Elements from Lines</Description>
+	    <Assembly>RevitAddinAcademy02.dll</Assembly>
+	    <FullClassName>RevitAddinAcademy02.cmdElementsFromLines</FullClassName>
+	    <ClientId>88DF6A73-FE54-4959-B2A4-4F744C20CD99</ClientId>
+	    <VendorId>com.typepad.thebuildingcoder</VendorId>
+	    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+    </AddIn>
   <AddIn Type="Application">
     <Name>Application RevitAddinAcademy02</Name>
     <Assembly>RevitAddinAcademy02.dll</Assembly>
