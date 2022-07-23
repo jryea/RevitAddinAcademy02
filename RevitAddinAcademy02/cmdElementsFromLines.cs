@@ -34,7 +34,8 @@ namespace RevitAddinAcademy02
             WallType genWallType = GetWallType(doc, @"Generic - 8""");
             DuctType ductType = GetDuctType(doc, "Default");
             PipeType pipeType = GetPipeType(doc, "Default");
-            MEPSystemType systemType = GetSystemType(doc, "Default");
+            MEPSystemType pipeSystemType = GetSystemType(doc, "Other");
+            MEPSystemType ductSystemType = GetSystemType(doc, "Supply Air");
             Level curLevel = GetLevelByName(doc, "Level 1");
 
             using (Transaction t = new Transaction(doc))
@@ -53,8 +54,19 @@ namespace RevitAddinAcademy02
                         GraphicsStyle curGS = curve.LineStyle as GraphicsStyle;
 
                         Curve curCurve = curve.GeometryCurve;
-                        XYZ startPoint = curCurve.GetEndPoint(0);
-                        XYZ endPoint = curCurve.GetEndPoint(1);
+
+                        XYZ startPoint = null;
+                        XYZ endPoint = null;
+
+                        try
+                        {
+                            startPoint = curCurve.GetEndPoint(0);
+                            endPoint = curCurve.GetEndPoint(1);
+                        }
+                        catch
+                        {
+                            Debug.Print("No endpoints found");   
+                        }
 
                         switch (curGS.Name)
                         {
@@ -64,11 +76,11 @@ namespace RevitAddinAcademy02
                             case "A-WALL":
                                 Wall genWall = Wall.Create(doc,curCurve,genWallType.Id,curLevel.Id,10,0,false,false);
                                 break;
-                            case "M-DUCT":
-                                Duct newDuct = Duct.Create(doc,systemType.Id,ductType.Id,curLevel.Id,startPoint,endPoint);
-                                break;
                             case "P-PIPE":
-                                Pipe newPipe = Pipe.Create(doc, systemType.Id, pipeType.Id, curLevel.Id, startPoint, endPoint);
+                                Pipe newPipe = Pipe.Create(doc, pipeSystemType.Id, pipeType.Id, curLevel.Id, startPoint, endPoint);
+                                break;
+                            case "M-DUCT":
+                                Duct newDuct = Duct.Create(doc,ductSystemType.Id,ductType.Id,curLevel.Id,startPoint,endPoint);
                                 break;
                             default:
                                 Debug.Print("Found something else");
