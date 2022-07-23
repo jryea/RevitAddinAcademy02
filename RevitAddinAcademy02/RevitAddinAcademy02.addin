@@ -27,6 +27,15 @@
 	    <VendorId>com.typepad.thebuildingcoder</VendorId>
 	    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
     </AddIn>
+	<AddIn Type="Command">
+		<Text>Walls from lines</Text>
+		<Description>Project Setup</Description>
+		<Assembly>RevitAddinAcademy02.dll</Assembly>
+		<FullClassName>RevitAddinAcademy02.cmdWallsFromLines</FullClassName>
+		<ClientId>0E1B32BD-0A16-42B4-90C4-1D84AFB7AAFF</ClientId>
+		<VendorId>com.typepad.thebuildingcoder</VendorId>
+		<VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+	</AddIn>
   <AddIn Type="Application">
     <Name>Application RevitAddinAcademy02</Name>
     <Assembly>RevitAddinAcademy02.dll</Assembly>
