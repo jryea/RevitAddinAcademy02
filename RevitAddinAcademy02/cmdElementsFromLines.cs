@@ -38,6 +38,7 @@ namespace RevitAddinAcademy02
             MEPSystemType ductSystemType = GetSystemType(doc, "Supply Air");
             Level curLevel = GetLevelByName(doc, "Level 1");
 
+
             using (Transaction t = new Transaction(doc))
             {
                 t.Start("Create Revit stuff");
@@ -83,7 +84,7 @@ namespace RevitAddinAcademy02
                                 Duct newDuct = Duct.Create(doc,ductSystemType.Id,ductType.Id,curLevel.Id,startPoint,endPoint);
                                 break;
                             default:
-                                Debug.Print("Found something else");
+                                doc.Delete(curve.Id);
                                 break;
                         }
                     }
