@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="myClass.cs" />
     <Compile Include="Week04Session.cs" />
     <Compile Include="cmdProjectSetup.cs" />
     <Compile Include="Command.cs" />

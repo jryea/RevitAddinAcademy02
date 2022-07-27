@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Forms = System.Windows.Forms;
+using Autodesk.Revit.DB.Structure;
 
 #endregion
 
@@ -26,28 +27,54 @@ namespace RevitAddinAcademy02
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            string modelPath = doc.PathName;
+
+            System.IO.Path.GetFileName(modelPath);
+
+            ModelPath mp = doc.GetCloudModelPath();
+            
+
+            Employee emp1 = new Employee("Joe", 24, "blue,red,white");
+            Employee emp2 = new Employee("Mary", 26, "green,red,brown");
+            Employee emp3 = new Employee("Felix", 45, "gray,beige");
+
+            List<Employee> empList = new List<Employee>();
+            empList.Add(emp1);
+            empList.Add(emp2);
+            empList.Add(emp3);
+
+            Employees allEmployees = new Employees(empList);
+
+            Debug.Print("There are " + allEmployees.GetEmployeCount().ToString() + " employees.");
+
+            Debug.Print(Utilities.GetTextFromClass());
+
+            List<SpatialElement> roomList = Utilities.GetAllRooms(doc);
+
             using (Transaction t = new Transaction(doc))
             {
-                t.Start("Create Revit stuff");
+                t.Start("Insert furniture");
 
-                SearchTitleBlocks(doc);
+                FamilySymbol curFS = Utilities.GetFamilySymbolByName(doc, "Desk", @"60"" x 30""");
+                curFS.Activate();    //Family types need to be activated before they're used
+                    
+                foreach (SpatialElement curRoom in roomList)
+                {
+                    LocationPoint roomLocation = curRoom.Location as LocationPoint;
+                    XYZ roomPoint = roomLocation.Point;
+
+                    FamilyInstance curFI = doc.Create.NewFamilyInstance(roomPoint, curFS, StructuralType.NonStructural);
+
+                    double area = Utilities.GetParamValueAsDouble(curRoom, "Area");
 
 
+                    Utilities.SetParamValue(curRoom, "Comments", "This is a comment");
+
+                }
                 t.Commit();
             }
-            
             return Result.Succeeded;
         }
-        internal void SearchTitleBlocks(Document doc)
-        {
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
-            collector.OfCategory(BuiltInCategory.OST_TitleBlocks);
-            collector.WhereElementIsElementType();
-
-            foreach (ElementType element in collector)
-            {
-                TaskDialog.Show("Element Type", element.Name);
-            }
         }
     }
 
