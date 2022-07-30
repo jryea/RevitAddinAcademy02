@@ -18,6 +18,15 @@
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
+	<AddIn Type="Command">
+		<Text>Fill Rooms with Furniture</Text>
+		<Description>Fill Rooms with Furniture</Description>
+		<Assembly>RevitAddinAcademy02.dll</Assembly>
+		<FullClassName>RevitAddinAcademy02.CmdFillRoomsWFurniture</FullClassName>
+		<ClientId>C1FC41D7-A0BE-45BF-B833-5E70DF4AFFBD</ClientId>
+		<VendorId>com.typepad.thebuildingcoder</VendorId>
+		<VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+	</AddIn>
   <AddIn Type="Application">
     <Name>Application RevitAddinAcademy02</Name>
     <Assembly>RevitAddinAcademy02.dll</Assembly>

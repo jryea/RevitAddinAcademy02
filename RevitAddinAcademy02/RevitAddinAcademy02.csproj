@@ -54,8 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="myClass.cs" />
-    <Compile Include="Week04Session.cs" />
+    <Compile Include="CmdFillRoomsWFurniture.cs" />
+    <Compile Include="FurnitureClass.cs" />
+    <Compile Include="FurnitureSetClass.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="cmdProjectSetup.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
