@@ -27,7 +27,6 @@ namespace RevitAddinAcademy02
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-      
             return Result.Succeeded;
         }
     }

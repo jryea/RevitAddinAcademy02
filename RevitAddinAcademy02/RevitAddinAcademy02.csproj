@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="FurnitureData_Cleaned.cs" />
+    <Compile Include="CmdInsertFurnitureCleaned.cs" />
     <Compile Include="CmdFillRoomsWFurniture.cs" />
     <Compile Include="FurnitureClass.cs" />
     <Compile Include="FurnitureSetClass.cs" />
