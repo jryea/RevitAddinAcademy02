@@ -1,32 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
-  <AddIn Type="Command">
-    <Text>Command RevitAddinAcademy02</Text>
-    <Description>Some description for RevitAddinAcademy02</Description>
-    <Assembly>RevitAddinAcademy02.dll</Assembly>
-    <FullClassName>RevitAddinAcademy02.Command</FullClassName>
-    <ClientId>727f1886-45a7-485c-82dc-f2bfa5f90570</ClientId>
-    <VendorId>com.typepad.thebuildingcoder</VendorId>
-    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
-  </AddIn>
-<AddIn Type="Command">
-    <Text>Command Project Setup</Text>
-    <Description>Project Setup</Description>
-    <Assembly>RevitAddinAcademy02.dll</Assembly>
-    <FullClassName>RevitAddinAcademy02.cmdProjectSetup</FullClassName>
-    <ClientId>E39322D7-774D-4D5E-8BAC-F0DC4B9B7CA1</ClientId>
-    <VendorId>com.typepad.thebuildingcoder</VendorId>
-    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
-  </AddIn>
-	<AddIn Type="Command">
-		<Text>Fill Rooms with Furniture</Text>
-		<Description>Fill Rooms with Furniture</Description>
-		<Assembly>RevitAddinAcademy02.dll</Assembly>
-		<FullClassName>RevitAddinAcademy02.CmdFillRoomsWFurniture</FullClassName>
-		<ClientId>C1FC41D7-A0BE-45BF-B833-5E70DF4AFFBD</ClientId>
-		<VendorId>com.typepad.thebuildingcoder</VendorId>
-		<VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
-	</AddIn>
   <AddIn Type="Application">
     <Name>Application RevitAddinAcademy02</Name>
     <Assembly>RevitAddinAcademy02.dll</Assembly>
