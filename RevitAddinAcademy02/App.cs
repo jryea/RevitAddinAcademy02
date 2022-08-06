@@ -28,13 +28,11 @@ namespace RevitAddinAcademy02
 
             //Step 2: Create Ribbon Panel
             //RibbonPanel curPanel = a.CreateRibbonPanel("Test Tab", "Test Panel");
-            RibbonPanel curPanel = CreateRibbonPanel(a, "Test Tab", "Test Panel");
+            RibbonPanel curPanel = CreateRibbonPanel(a, "JRR Custom Tools", "Test Panel");
 
             //Step 3: Create button data instances
             PushButtonData pData1 = new PushButtonData("button1", "Button 1",  GetAssemblyName(), "RevitAddinAcademy02.Command");
             PushButtonData pData2 = new PushButtonData("button2", "Button 2",  GetAssemblyName(), "RevitAddinAcademy02.Command");
-            PushButtonData pData3 = new PushButtonData("button3", "Button 3",  GetAssemblyName(), "RevitAddinAcademy02.Command");
-            PushButtonData pData4 = new PushButtonData("button4", "Button 4",  GetAssemblyName(), "RevitAddinAcademy02.Command");
 
             SplitButtonData sData1 = new SplitButtonData("splitButton1", "Split Button 1");
             PulldownButtonData pbData = new PulldownButtonData("pulldownButton1", "Pulldown /rButton1");
