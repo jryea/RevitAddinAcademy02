@@ -42,6 +42,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
       <HintPath>$(ProgramW6432)\Autodesk\Revit 2022\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -51,13 +52,12 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="FurnitureData_Cleaned.cs" />
-    <Compile Include="CmdInsertFurnitureCleaned.cs" />
     <Compile Include="CmdFillRoomsWFurniture.cs" />
     <Compile Include="FurnitureClass.cs" />
     <Compile Include="FurnitureSetClass.cs" />
@@ -72,6 +72,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Blue_16.png" />
+    <EmbeddedResource Include="Resources\Blue_32.png" />
+    <EmbeddedResource Include="Resources\Green_16.png" />
+    <EmbeddedResource Include="Resources\Green_32.png" />
+    <EmbeddedResource Include="Resources\Red_16.png" />
+    <EmbeddedResource Include="Resources\Red_32.png" />
+    <EmbeddedResource Include="Resources\Yellow_16.png" />
+    <EmbeddedResource Include="Resources\Yellow_32.png" />
     <Content Include="RevitAddinAcademy02.addin" />
   </ItemGroup>
   <ItemGroup>
